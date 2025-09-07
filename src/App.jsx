@@ -2,38 +2,47 @@ import { useState } from 'react'
 import Layout from './components/Layout'
 import TextInput from './components/TextInput'
 import Button from './components/Button'
+import DiffViewer from './components/DiffViewer'
 import { ArrowLeftRight, Trash2, Play } from 'lucide-react'
 import { compareTexts } from './utils/diffUtils'
 
 function App() {
   const [originalText, setOriginalText] = useState('')
   const [modifiedText, setModifiedText] = useState('')
+  const [diffResult, setDiffResult] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const handleCompare = () => {
+  const handleCompare = async () => {
     if (!originalText.trim() || !modifiedText.trim()) {
-      console.log('Por favor, insira texto em ambos os campos')
+      alert('Por favor, insira texto em ambos os campos')
       return
     }
 
-    console.log('Comparando textos...')
-    const result = compareTexts(originalText, modifiedText, 'lines', {
-      ignoreCase: false,
-      ignoreWhitespace: false
-    })
+    setIsLoading(true)
     
-    console.log('Resultado da comparação:', result)
-    console.log('Estatísticas:', result.stats)
+    // Simular um pequeno delay para mostrar loading
+    setTimeout(() => {
+      const result = compareTexts(originalText, modifiedText, 'lines', {
+        ignoreCase: false,
+        ignoreWhitespace: false
+      })
+      
+      setDiffResult(result)
+      setIsLoading(false)
+    }, 300)
   }
 
   const handleClear = () => {
     setOriginalText('')
     setModifiedText('')
+    setDiffResult(null)
   }
 
   const handleSwap = () => {
     const temp = originalText
     setOriginalText(modifiedText)
     setModifiedText(temp)
+    setDiffResult(null)
   }
 
   return (
@@ -64,9 +73,13 @@ function App() {
         </div>
 
         <div className="flex flex-wrap justify-center gap-4 mb-8">
-          <Button onClick={handleCompare} className="flex items-center gap-2">
+          <Button 
+            onClick={handleCompare} 
+            disabled={isLoading}
+            className="flex items-center gap-2"
+          >
             <Play className="w-4 h-4" />
-            Comparar
+            {isLoading ? 'Comparando...' : 'Comparar'}
           </Button>
           <Button variant="outline" onClick={handleSwap} className="flex items-center gap-2">
             <ArrowLeftRight className="w-4 h-4" />
@@ -77,6 +90,23 @@ function App() {
             Limpar
           </Button>
         </div>
+
+        {/* Área de resultado */}
+        {(diffResult || isLoading) && (
+          <div className="mb-8">
+            {isLoading ? (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <p className="mt-4 text-gray-600">Processando comparação...</p>
+              </div>
+            ) : (
+              <DiffViewer 
+                diff={diffResult?.diff} 
+                stats={diffResult?.stats}
+              />
+            )}
+          </div>
+        )}
       </div>
     </Layout>
   )
