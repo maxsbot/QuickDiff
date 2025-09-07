@@ -1,11 +1,37 @@
 import { useMemo } from 'react'
 
-export default function DiffViewer({ diff, stats }) {
+export default function DiffViewer({ diff, stats, type = 'lines' }) {
   const renderedDiff = useMemo(() => {
     if (!diff || diff.length === 0) {
       return null
     }
 
+    // Para comparação por palavras/caracteres, usar visualização inline
+    if (type === 'words' || type === 'chars') {
+      return (
+        <div className="p-4 font-mono text-sm whitespace-pre-wrap break-words">
+          {diff.map((part, index) => {
+            let className = 'px-1 '
+            
+            if (part.added) {
+              className += 'bg-green-100 text-green-800 border border-green-300'
+            } else if (part.removed) {
+              className += 'bg-red-100 text-red-800 border border-red-300 line-through'
+            } else {
+              className += 'text-gray-700'
+            }
+
+            return (
+              <span key={index} className={className}>
+                {part.value}
+              </span>
+            )
+          })}
+        </div>
+      )
+    }
+
+    // Visualização por linhas
     let lineNumber = 1
     
     return diff.map((part, index) => {
@@ -17,7 +43,6 @@ export default function DiffViewer({ diff, stats }) {
 
       return lines.map((line, lineIndex) => {
         const currentLineNumber = lineNumber++
-        const isLastLine = index === diff.length - 1 && lineIndex === lines.length - 1
         
         // Classes para diferentes tipos de mudança
         let className = 'flex border-l-4 '
@@ -26,15 +51,15 @@ export default function DiffViewer({ diff, stats }) {
         let prefix = ' '
 
         if (part.added) {
-          bgClass = 'bg-green-50'
+          bgClass = 'bg-green-50 hover:bg-green-100'
           borderClass = 'border-green-500'
           prefix = '+'
         } else if (part.removed) {
-          bgClass = 'bg-red-50'
+          bgClass = 'bg-red-50 hover:bg-red-100'
           borderClass = 'border-red-500'
           prefix = '-'
         } else {
-          bgClass = 'bg-white'
+          bgClass = 'bg-white hover:bg-gray-50'
           borderClass = 'border-gray-200'
           prefix = ' '
         }
@@ -43,10 +68,10 @@ export default function DiffViewer({ diff, stats }) {
 
         return (
           <div key={`${index}-${lineIndex}`} className={className}>
-            <div className="w-12 flex-shrink-0 bg-gray-100 text-gray-500 text-xs text-right px-2 py-1 font-mono">
+            <div className="w-12 flex-shrink-0 bg-gray-100 text-gray-500 text-xs text-right px-2 py-1 font-mono select-none">
               {currentLineNumber}
             </div>
-            <div className="w-6 flex-shrink-0 bg-gray-200 text-gray-600 text-xs text-center py-1 font-mono">
+            <div className="w-6 flex-shrink-0 bg-gray-200 text-gray-600 text-xs text-center py-1 font-mono select-none">
               {prefix}
             </div>
             <div className="flex-1 px-3 py-1 font-mono text-sm whitespace-pre-wrap break-all">
@@ -56,7 +81,7 @@ export default function DiffViewer({ diff, stats }) {
         )
       })
     })
-  }, [diff])
+  }, [diff, type])
 
   if (!diff || diff.length === 0) {
     return (
