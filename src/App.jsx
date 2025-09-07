@@ -15,6 +15,19 @@ function App() {
   const [ignoreCase, setIgnoreCase] = useState(false)
   const [ignoreWhitespace, setIgnoreWhitespace] = useState(false)
 
+  const scrollToResults = () => {
+    setTimeout(() => {
+      const resultsElement = document.getElementById('comparison-results')
+      if (resultsElement) {
+        resultsElement.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start',
+          inline: 'nearest'
+        })
+      }
+    }, 200)
+  }
+
   const handleCompare = async () => {
     if (!originalText.trim() || !modifiedText.trim()) {
       alert('Por favor, insira texto em ambos os campos')
@@ -32,6 +45,7 @@ function App() {
       
       setDiffResult(result)
       setIsLoading(false)
+      scrollToResults()
     }, 300)
   }
 
@@ -135,6 +149,7 @@ function App() {
                           ignoreWhitespace
                         })
                         setDiffResult(result)
+                        scrollToResults()
                       }, 100)
                     }
                   }}
@@ -186,6 +201,7 @@ function App() {
                         ignoreWhitespace
                       })
                       setDiffResult(result)
+                      scrollToResults()
                     }, 100)
                   }
                 }}
@@ -225,6 +241,7 @@ function App() {
                         ignoreWhitespace: newIgnoreWhitespace
                       })
                       setDiffResult(result)
+                      scrollToResults()
                     }, 100)
                   }
                 }}
@@ -274,7 +291,7 @@ function App() {
 
         {/* Área de resultado */}
         {(diffResult || isLoading) && (
-          <div className="mb-8">
+          <div id="comparison-results" className="mb-8">
             {isLoading ? (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
                 <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
