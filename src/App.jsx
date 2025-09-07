@@ -3,14 +3,26 @@ import Layout from './components/Layout'
 import TextInput from './components/TextInput'
 import Button from './components/Button'
 import { ArrowLeftRight, Trash2, Play } from 'lucide-react'
+import { compareTexts } from './utils/diffUtils'
 
 function App() {
   const [originalText, setOriginalText] = useState('')
   const [modifiedText, setModifiedText] = useState('')
 
   const handleCompare = () => {
-    // Implementar comparação
+    if (!originalText.trim() || !modifiedText.trim()) {
+      console.log('Por favor, insira texto em ambos os campos')
+      return
+    }
+
     console.log('Comparando textos...')
+    const result = compareTexts(originalText, modifiedText, 'lines', {
+      ignoreCase: false,
+      ignoreWhitespace: false
+    })
+    
+    console.log('Resultado da comparação:', result)
+    console.log('Estatísticas:', result.stats)
   }
 
   const handleClear = () => {
