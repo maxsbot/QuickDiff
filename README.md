@@ -14,6 +14,12 @@ Uma ferramenta web moderna para identificar diferenças instantaneamente entre v
 
 **[https://maxsbot.github.io/QuickDiff/](https://maxsbot.github.io/QuickDiff/)**
 
+## 📸 Demonstração
+
+![QuickDiff em ação](quickdiff-demo-text-comparison.png)
+
+*Demonstração comparando dois textos sobre diferenças - a ferramenta identifica automaticamente mudanças, adições e remoções com visualização clara e estatísticas em tempo real.*
+
 ## 🛠️ Desenvolvimento Local
 
 ```bash
