@@ -65,13 +65,34 @@ function App() {
   return (
     <Layout>
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8 text-center">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
-            Comparador de Texto
+        <div className="mb-8 text-center max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-gray-800 mb-3">
+            Compare textos e códigos de forma
+            <span className="text-blue-600"> inteligente</span>
           </h2>
-          <p className="text-gray-600">
-            Compare dois textos e visualize as diferenças
+          <p className="text-lg text-gray-600 mb-2">
+            Identifique diferenças instantaneamente entre versões de código, textos gerados por IA ou documentos
           </p>
+          <div className="flex items-center justify-center space-x-6 text-sm text-gray-500">
+            <div className="flex items-center">
+              <svg className="w-4 h-4 mr-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span>100% privado</span>
+            </div>
+            <div className="flex items-center">
+              <svg className="w-4 h-4 mr-1 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+              </svg>
+              <span>Processamento local</span>
+            </div>
+            <div className="flex items-center">
+              <svg className="w-4 h-4 mr-1 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+              <span>Ideal para código</span>
+            </div>
+          </div>
         </div>
 
         {/* Card principal para inputs de texto */}
