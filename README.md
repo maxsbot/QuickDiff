@@ -8,12 +8,7 @@ Uma ferramenta web moderna para identificar diferenças instantaneamente entre v
 
 - 🔄 **Comparação inteligente** - Por linha, palavra ou caractere
 - 🎨 **Visualização clara** - Diferenças destacadas em cores
-- ⚙️ **Opções avançadas** - Ignorar maiúsculas/minúsculas e espaços
 - 🔒 **100% privado** - Todo processamento é feito localmente
-- ⚡ **Comparação automática** - Resultados em tempo real
-- 📊 **Estatísticas detalhadas** - Similaridade e contagem de mudanças
-- 📱 **Design responsivo** - Funciona perfeitamente em mobile
-- 🎯 **Interface intuitiva** - UX otimizada para desenvolvedores
 
 ## 🚀 Acesse Online
 
@@ -36,19 +31,19 @@ npm run dev
 npm run build
 ```
 
-## 🏗️ Stack Tecnológica
+## 🏗️ Stack
 
 - **React 19** - Interface de usuário
 - **Vite** - Build tool e dev server
 - **Tailwind CSS v4** - Styling moderno
 - **diff** - Algoritmo de comparação
 - **Lucide React** - Ícones elegantes
-- **GitHub Pages** - Hospedagem gratuita
+- **GitHub Pages** - Hospedagem
 
 ## 📋 Casos de Uso
 
 - 📝 **Textos gerados por IA** - Compare versões de prompts e respostas
-- 💻 **Código fonte** - Revise mudanças em arquivos
+- 💻 **Código** - Revise mudanças em arquivos
 - 📄 **Documentos** - Identifique alterações em textos
 - 🔍 **Debug** - Compare saídas de logs ou configs
 
@@ -57,7 +52,7 @@ npm run build
 - ✅ **Nenhum dado é enviado** para servidores
 - ✅ **Processamento 100% local** no seu navegador
 - ✅ **Sem cookies** ou rastreamento
-- ✅ **Código fonte aberto** e auditável
+- ✅ **Código aberto** e auditável
 
 ## 📄 Licença
 
