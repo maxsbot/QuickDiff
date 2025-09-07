@@ -125,7 +125,19 @@ function App() {
                   } border-2 ${
                     comparisonType === mode.value ? 'border-blue-500' : 'border-gray-200'
                   } rounded-lg p-4`}
-                  onClick={() => setComparisonType(mode.value)}
+                  onClick={() => {
+                    setComparisonType(mode.value)
+                    // Auto-comparar se ambos os textos estiverem preenchidos
+                    if (originalText.trim() && modifiedText.trim() && !isLoading) {
+                      setTimeout(() => {
+                        const result = compareTexts(originalText, modifiedText, mode.value, {
+                          ignoreCase,
+                          ignoreWhitespace
+                        })
+                        setDiffResult(result)
+                      }, 100)
+                    }
+                  }}
                 >
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-2xl font-mono font-bold">{mode.icon}</span>
@@ -163,7 +175,20 @@ function App() {
                     ? 'bg-green-50 border-green-300 shadow-md' 
                     : 'bg-white border-gray-200 hover:border-green-300'
                 } border-2 rounded-lg p-4`}
-                onClick={() => setIgnoreCase(!ignoreCase)}
+                onClick={() => {
+                  const newIgnoreCase = !ignoreCase
+                  setIgnoreCase(newIgnoreCase)
+                  // Auto-comparar se ambos os textos estiverem preenchidos
+                  if (originalText.trim() && modifiedText.trim() && !isLoading) {
+                    setTimeout(() => {
+                      const result = compareTexts(originalText, modifiedText, comparisonType, {
+                        ignoreCase: newIgnoreCase,
+                        ignoreWhitespace
+                      })
+                      setDiffResult(result)
+                    }, 100)
+                  }
+                }}
               >
                 <div className="flex items-center">
                   <div className={`flex-shrink-0 w-5 h-5 rounded border-2 mr-3 flex items-center justify-center ${
@@ -189,7 +214,20 @@ function App() {
                     ? 'bg-green-50 border-green-300 shadow-md' 
                     : 'bg-white border-gray-200 hover:border-green-300'
                 } border-2 rounded-lg p-4`}
-                onClick={() => setIgnoreWhitespace(!ignoreWhitespace)}
+                onClick={() => {
+                  const newIgnoreWhitespace = !ignoreWhitespace
+                  setIgnoreWhitespace(newIgnoreWhitespace)
+                  // Auto-comparar se ambos os textos estiverem preenchidos
+                  if (originalText.trim() && modifiedText.trim() && !isLoading) {
+                    setTimeout(() => {
+                      const result = compareTexts(originalText, modifiedText, comparisonType, {
+                        ignoreCase,
+                        ignoreWhitespace: newIgnoreWhitespace
+                      })
+                      setDiffResult(result)
+                    }, 100)
+                  }
+                }}
               >
                 <div className="flex items-center">
                   <div className={`flex-shrink-0 w-5 h-5 rounded border-2 mr-3 flex items-center justify-center ${

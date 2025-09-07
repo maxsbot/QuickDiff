@@ -10,7 +10,7 @@ export default function Header() {
             <h1 className="text-2xl font-bold text-gray-800">QuickDiff</h1>
           </div>
           <p className="text-sm text-gray-600 hidden md:block">
-            Comparador de texto/arquivo rápido e intuitivo
+            Comparador de texto rápido e intuitivo
           </p>
         </div>
       </div>
