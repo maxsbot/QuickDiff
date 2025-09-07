@@ -63,3 +63,14 @@ npm run build
 ## 📄 Licença
 
 MIT License - veja [LICENSE](LICENSE) para detalhes.
+
+---
+
+<div align="center">
+  <strong>Desenvolvido por</strong><br>
+  <a href="https://ms.dev" target="_blank">
+    <img src="public/MS.DEV.png" alt="MS.DEV - Soluções em Tecnologia" height="40">
+  </a>
+  <br>
+  <sub>🚀 MS.DEV - Soluções em Tecnologia</sub>
+</div>
