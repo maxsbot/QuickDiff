@@ -75,7 +75,30 @@ function App() {
   const toggleSelection = (index) => {
     setSelections(prev => {
       const newSelections = [...prev]
+      const currentPart = diffResult.diff[index]
+
+      // Toggle the clicked part
       newSelections[index] = !newSelections[index]
+
+      // If we are selecting this part (setting to true), deselect adjacent conflicting parts
+      if (newSelections[index]) {
+        // Check previous part
+        if (index > 0) {
+          const prevPart = diffResult.diff[index - 1]
+          if ((currentPart.added && prevPart.removed) || (currentPart.removed && prevPart.added)) {
+            newSelections[index - 1] = false
+          }
+        }
+
+        // Check next part
+        if (index < diffResult.diff.length - 1) {
+          const nextPart = diffResult.diff[index + 1]
+          if ((currentPart.added && nextPart.removed) || (currentPart.removed && nextPart.added)) {
+            newSelections[index + 1] = false
+          }
+        }
+      }
+
       return newSelections
     })
   }
