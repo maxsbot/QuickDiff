@@ -13,14 +13,16 @@ function App() {
   const [isLoading, setIsLoading] = useState(false)
   const [comparisonType, setComparisonType] = useState('lines')
   const [ignoreCase, setIgnoreCase] = useState(false)
+
   const [ignoreWhitespace, setIgnoreWhitespace] = useState(false)
+  const [selections, setSelections] = useState([]) // Array of booleans for diff chunks
 
   const scrollToResults = () => {
     setTimeout(() => {
       const resultsElement = document.getElementById('comparison-results')
       if (resultsElement) {
-        resultsElement.scrollIntoView({ 
-          behavior: 'smooth', 
+        resultsElement.scrollIntoView({
+          behavior: 'smooth',
           block: 'start',
           inline: 'nearest'
         })
@@ -35,15 +37,21 @@ function App() {
     }
 
     setIsLoading(true)
-    
+
     // Simular um pequeno delay para mostrar loading
     setTimeout(() => {
       const result = compareTexts(originalText, modifiedText, comparisonType, {
         ignoreCase,
         ignoreWhitespace
       })
-      
+
       setDiffResult(result)
+
+      // Initialize selections: Added=True, Removed=False, Unchanged=True
+      if (result && result.diff) {
+        setSelections(result.diff.map(part => !part.removed))
+      }
+
       setIsLoading(false)
       scrollToResults()
     }, 300)
@@ -53,6 +61,7 @@ function App() {
     setOriginalText('')
     setModifiedText('')
     setDiffResult(null)
+    setSelections([])
   }
 
   const handleSwap = () => {
@@ -60,6 +69,29 @@ function App() {
     setOriginalText(modifiedText)
     setModifiedText(temp)
     setDiffResult(null)
+    setSelections([])
+  }
+
+  const toggleSelection = (index) => {
+    setSelections(prev => {
+      const newSelections = [...prev]
+      newSelections[index] = !newSelections[index]
+      return newSelections
+    })
+  }
+
+  const getFinalText = () => {
+    if (!diffResult || !diffResult.diff) return ''
+    return diffResult.diff
+      .filter((_, index) => selections[index])
+      .map(part => part.value)
+      .join('')
+  }
+
+  const copyFinalText = () => {
+    const text = getFinalText()
+    navigator.clipboard.writeText(text)
+    alert('Texto final copiado para a área de transferência!')
   }
 
   return (
@@ -110,7 +142,7 @@ function App() {
               </div>
             </div>
           </div>
-          
+
           <div className="p-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-2">
@@ -121,7 +153,7 @@ function App() {
                   onChange={setOriginalText}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700">Texto Alterado</label>
                 <TextInput
@@ -131,7 +163,7 @@ function App() {
                 />
               </div>
             </div>
-            
+
             {/* Status simples */}
             {originalText.trim() && modifiedText.trim() && (
               <div className="mt-4 text-center">
@@ -156,7 +188,7 @@ function App() {
             </div>
             <h3 className="text-lg font-semibold text-gray-800">Opções de Comparação</h3>
           </div>
-          
+
           {/* Modo de Comparação - Cards */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-3">
@@ -165,37 +197,35 @@ function App() {
             </label>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {[
-                { 
-                  value: 'lines', 
-                  label: 'Por Linha', 
-                  desc: 'Ideal para código e texto estruturado', 
+                {
+                  value: 'lines',
+                  label: 'Por Linha',
+                  desc: 'Ideal para código e texto estruturado',
                   icon: '≡',
                   details: 'Compara linha por linha, melhor para ver mudanças estruturais'
                 },
-                { 
-                  value: 'words', 
-                  label: 'Por Palavra', 
-                  desc: 'Ideal para textos e documentos', 
+                {
+                  value: 'words',
+                  label: 'Por Palavra',
+                  desc: 'Ideal para textos e documentos',
                   icon: 'W',
                   details: 'Compara palavra por palavra, útil para textos corridos'
                 },
-                { 
-                  value: 'chars', 
-                  label: 'Por Caractere', 
-                  desc: 'Análise detalhada, mudanças mínimas', 
+                {
+                  value: 'chars',
+                  label: 'Por Caractere',
+                  desc: 'Análise detalhada, mudanças mínimas',
                   icon: 'A',
                   details: 'Compara cada caractere, mostra diferenças muito pequenas'
                 }
               ].map((mode) => (
                 <div
                   key={mode.value}
-                  className={`group relative cursor-pointer transition-all duration-200 ${
-                    comparisonType === mode.value
-                      ? 'bg-blue-500 text-white shadow-lg transform scale-105'
-                      : 'bg-white text-gray-700 hover:bg-blue-50 hover:border-blue-300 hover:shadow-md'
-                  } border-2 ${
-                    comparisonType === mode.value ? 'border-blue-500' : 'border-gray-200'
-                  } rounded-lg p-4`}
+                  className={`group relative cursor-pointer transition-all duration-200 ${comparisonType === mode.value
+                    ? 'bg-blue-500 text-white shadow-lg transform scale-105'
+                    : 'bg-white text-gray-700 hover:bg-blue-50 hover:border-blue-300 hover:shadow-md'
+                    } border-2 ${comparisonType === mode.value ? 'border-blue-500' : 'border-gray-200'
+                    } rounded-lg p-4`}
                   onClick={() => {
                     setComparisonType(mode.value)
                     // Auto-comparar se ambos os textos estiverem preenchidos
@@ -206,6 +236,9 @@ function App() {
                           ignoreWhitespace
                         })
                         setDiffResult(result)
+                        if (result && result.diff) {
+                          setSelections(result.diff.map(part => !part.removed))
+                        }
                         scrollToResults()
                       }, 100)
                     }
@@ -223,7 +256,7 @@ function App() {
                   <p className={`text-sm ${comparisonType === mode.value ? 'text-blue-100' : 'text-gray-500'}`}>
                     {mode.desc}
                   </p>
-                  
+
                   {/* Tooltip on hover */}
                   {comparisonType !== mode.value && (
                     <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 text-xs text-white bg-gray-800 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10 whitespace-nowrap">
@@ -241,12 +274,11 @@ function App() {
             <label className="block text-sm font-medium text-gray-700 mb-3">Configurações Avançadas</label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Ignorar maiúsculas */}
-              <div 
-                className={`cursor-pointer transition-all duration-200 ${
-                  ignoreCase 
-                    ? 'bg-green-50 border-green-300 shadow-md' 
-                    : 'bg-white border-gray-200 hover:border-green-300'
-                } border-2 rounded-lg p-4`}
+              <div
+                className={`cursor-pointer transition-all duration-200 ${ignoreCase
+                  ? 'bg-green-50 border-green-300 shadow-md'
+                  : 'bg-white border-gray-200 hover:border-green-300'
+                  } border-2 rounded-lg p-4`}
                 onClick={() => {
                   const newIgnoreCase = !ignoreCase
                   setIgnoreCase(newIgnoreCase)
@@ -258,15 +290,17 @@ function App() {
                         ignoreWhitespace
                       })
                       setDiffResult(result)
+                      if (result && result.diff) {
+                        setSelections(result.diff.map(part => !part.removed))
+                      }
                       scrollToResults()
                     }, 100)
                   }
                 }}
               >
                 <div className="flex items-center">
-                  <div className={`flex-shrink-0 w-5 h-5 rounded border-2 mr-3 flex items-center justify-center ${
-                    ignoreCase ? 'bg-green-500 border-green-500' : 'border-gray-300'
-                  }`}>
+                  <div className={`flex-shrink-0 w-5 h-5 rounded border-2 mr-3 flex items-center justify-center ${ignoreCase ? 'bg-green-500 border-green-500' : 'border-gray-300'
+                    }`}>
                     {ignoreCase && (
                       <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -281,12 +315,11 @@ function App() {
               </div>
 
               {/* Ignorar espaços */}
-              <div 
-                className={`cursor-pointer transition-all duration-200 ${
-                  ignoreWhitespace 
-                    ? 'bg-green-50 border-green-300 shadow-md' 
-                    : 'bg-white border-gray-200 hover:border-green-300'
-                } border-2 rounded-lg p-4`}
+              <div
+                className={`cursor-pointer transition-all duration-200 ${ignoreWhitespace
+                  ? 'bg-green-50 border-green-300 shadow-md'
+                  : 'bg-white border-gray-200 hover:border-green-300'
+                  } border-2 rounded-lg p-4`}
                 onClick={() => {
                   const newIgnoreWhitespace = !ignoreWhitespace
                   setIgnoreWhitespace(newIgnoreWhitespace)
@@ -298,15 +331,17 @@ function App() {
                         ignoreWhitespace: newIgnoreWhitespace
                       })
                       setDiffResult(result)
+                      if (result && result.diff) {
+                        setSelections(result.diff.map(part => !part.removed))
+                      }
                       scrollToResults()
                     }, 100)
                   }
                 }}
               >
                 <div className="flex items-center">
-                  <div className={`flex-shrink-0 w-5 h-5 rounded border-2 mr-3 flex items-center justify-center ${
-                    ignoreWhitespace ? 'bg-green-500 border-green-500' : 'border-gray-300'
-                  }`}>
+                  <div className={`flex-shrink-0 w-5 h-5 rounded border-2 mr-3 flex items-center justify-center ${ignoreWhitespace ? 'bg-green-500 border-green-500' : 'border-gray-300'
+                    }`}>
                     {ignoreWhitespace && (
                       <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -325,8 +360,8 @@ function App() {
 
 
         <div className="flex flex-wrap justify-center gap-4 mb-8">
-          <Button 
-            onClick={handleCompare} 
+          <Button
+            onClick={handleCompare}
             disabled={isLoading || (!originalText.trim() || !modifiedText.trim())}
             className="flex items-center gap-2 relative"
           >
@@ -355,11 +390,31 @@ function App() {
                 <p className="mt-4 text-gray-600">Processando comparação...</p>
               </div>
             ) : (
-              <DiffViewer 
-                diff={diffResult?.diff} 
-                stats={diffResult?.stats}
-                type={diffResult?.type}
-              />
+              <div className="space-y-6">
+                <DiffViewer
+                  diff={diffResult?.diff}
+                  stats={diffResult?.stats}
+                  type={diffResult?.type}
+                  selections={selections}
+                  onToggle={toggleSelection}
+                />
+
+                {/* Final Result Action */}
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-800">Resultado Final Personalizado</h3>
+                    <p className="text-sm text-gray-600">
+                      Clique nas partes coloridas acima para incluir/remover do texto final.
+                    </p>
+                  </div>
+                  <Button onClick={copyFinalText} className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                    </svg>
+                    Copiar Resultado Final
+                  </Button>
+                </div>
+              </div>
             )}
           </div>
         )}
