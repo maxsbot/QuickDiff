@@ -8,7 +8,7 @@ export default function Footer() {
           <div className="flex flex-col items-center space-y-0">
             <span className="text-sm text-gray-600">Desenvolvido por</span>
             <a
-              href="https://ms.dev"
+              href="https://msdev.solutions"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:opacity-80 transition-opacity"
